@@ -1420,3 +1420,91 @@ This page uses BaseLayout directly, skipping AppLayout (no header/footer):
 - Existing projects with `@extends/@section` → Either is fine, no need to migrate unless you want to
 
 This demonstrates using the component-based layout system where layouts are components that accept props and slots, providing a more flexible and modern alternative to traditional template inheritance with `@extends` and `@section`.
+
+## Adding Custom CSS in Laravel
+
+### 1. **Simple Approach – `public` Directory**
+
+Create a CSS file in `public/css/`:
+
+```bash
+public/css/custom.css
+```
+
+Include it in your Blade template:
+
+```html
+<link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+```
+
+- Best for small or very simple projects
+- No bundling, versioning, or optimization
+
+---
+
+### 2. **Vite (Laravel 9+, Recommended)**
+
+Place your CSS file in `resources/css/`:
+
+```bash
+resources/css/app.css
+```
+
+Make sure your `vite.config.js` contains:
+
+```javascript
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: ['resources/css/app.css', 'resources/js/app.js'],
+            refresh: true,
+        }),
+    ],
+});
+```
+
+Include it in your Blade template:
+
+```html
+@vite(['resources/css/app.css', 'resources/js/app.js'])
+```
+
+Run Vite:
+
+```bash
+npm run dev    # development
+npm run build  # production
+```
+
+---
+
+### 3. **Multiple CSS Files with Vite**
+
+You can create additional CSS files, e.g.:
+
+```bash
+resources/css/custom.css
+```
+
+Then register them in `vite.config.js`:
+
+```javascript
+input: [
+    'resources/css/app.css',
+    'resources/css/custom.css',
+    'resources/js/app.js'
+]
+```
+
+And include them in Blade:
+
+```html
+@vite(['resources/css/custom.css'])
+```
+
+💡 **Best practice**:
+For larger projects, import custom styles inside `app.css`:
+
+```css
+@import './custom.css';
+```
